@@ -1,0 +1,197 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+header {
+  min-height: 50vh;
+  /* Animated flowing gradient */
+  background: linear-gradient(-45deg, #3b82f6, #60a5fa, #1d4ed8, #3b82f6, #1e40af);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Flowing gradient animation */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Subtle texture overlay */
+header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+  animation: textureFloat 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes textureFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.98); }
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #60a5fa, #93c5fd, #60a5fa);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { box-shadow: 0 0 20px rgba(96, 165, 250, 0.6); }
+  50% { box-shadow: 0 0 40px rgba(96, 165, 250, 0.9); }
+}
+
+header h1 {
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, rgba(242, 242, 242, 0.95) 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  position: relative;
+  z-index: 2;
+}
+
+header p {
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  font-weight: 400;
+  opacity: 0.95;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.4;
+  position: relative;
+  z-index: 2;
+}
+
+.nav-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.NavButton {
+  padding: 1.75rem 2.5rem;
+  background: white;
+  color: #1e293b;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.12);
+  border-top: 4px solid transparent;
+  letter-spacing: 0.025em;
+}
+
+.NavButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.NavButton:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 60px rgba(59, 130, 246, 0.25);
+  border-color: #3b82f6;
+}
+
+.NavButton:hover::before {
+  left: 100%;
+}
+
+.NavButton:active {
+  transform: translateY(-3px);
+}
+
+.NavButton:first-child {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.NavButton:first-child:hover {
+  border-top-color: #3b82f6;
+  box-shadow: 0 25px 60px rgba(59, 130, 246, 0.3);
+}
+
+.NavButton:last-child:hover {
+  border-top-color: #10b981;
+  box-shadow: 0 25px 60px rgba(16, 185, 129, 0.25);
+}
+
+/* Safe areas */
+@supports (padding: max(0px)) {
+  header {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    padding-top: max(2rem, env(safe-area-inset-top));
+  }
+}
+
+/* Responsive */
+@media (max-height: 500px) and (orientation: landscape) {
+  header {
+    min-height: 40vh;
+    padding: 1.5rem;
+  }
+  
+  .nav-container {
+    padding: 2rem 1rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 2rem 1rem;
+  }
+  
+  .nav-container {
+    padding: 2rem 1rem;
+  }
+}
