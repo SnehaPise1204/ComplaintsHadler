@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { Timestamp, collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import "./Show.css";
 
 function ShowComplaints() {
@@ -19,6 +19,7 @@ function ShowComplaints() {
       id: doc.id,
       ...doc.data()
     }));
+
     setComplaints(data);
     setFiltered(data);
   };
@@ -40,13 +41,38 @@ function ShowComplaints() {
 
   const markCompleted = async (id) => {
     const complaintRef = doc(db, "complaints", id);
-    await updateDoc(complaintRef, { completed: true });
+
+    await updateDoc(complaintRef, { 
+      completed: true,
+      completedAt: Timestamp.now()
+    });
 
     const updated = complaints.map(c =>
-      c.id === id ? { ...c, completed: true } : c
+      c.id === id 
+        ? { ...c, completed: true, completedAt: Timestamp.now() }
+        : c
     );
+
     setComplaints(updated);
-    handleSearch(searchText); // re-apply search
+    handleSearch(searchText);
+  };
+
+  const markInCompleted = async (id) => {
+    const complaintRef = doc(db, "complaints", id);
+    
+    await updateDoc(complaintRef, { 
+      completed: false,
+      completedAt: null
+    });
+
+    const updated = complaints.map(c =>
+      c.id === id
+        ? { ...c, completed: false, completedAt: null }
+        : c
+    );
+
+    setComplaints(updated);
+    handleSearch(searchText);
   };
 
   const activeComplaints = filtered.filter(c => !c.completed);
@@ -54,7 +80,6 @@ function ShowComplaints() {
 
   return (
     <div className="complaints-container">
-      {/* Header */}
       <div className="header-section">
         <h1>Complaints Dashboard</h1>
         <h2>All Complaints</h2>
@@ -69,6 +94,7 @@ function ShowComplaints() {
         >
           <option value="city">Search by City</option>
           <option value="district">Search by District</option>
+          <option value="name">Search by Name</option>
         </select>
 
         <input
@@ -96,6 +122,7 @@ function ShowComplaints() {
                 <li><b>District:</b> {c.district}</li>
                 <li><b>Mobile:</b> {c.mobile}</li>
               </ul>
+
               <button onClick={() => markCompleted(c.id)} className="complete-btn">
                 Mark Completed
               </button>
@@ -108,6 +135,7 @@ function ShowComplaints() {
       {completedComplaints.length > 0 && (
         <div className="completed-section">
           <h2>Completed Complaints</h2>
+
           {completedComplaints.map(c => (
             <div key={c.id} className="complaint-card completed">
               <ul className="complaint-details">
@@ -116,7 +144,18 @@ function ShowComplaints() {
                 <li><b>City:</b> {c.city}</li>
                 <li><b>District:</b> {c.district}</li>
                 <li><b>Mobile:</b> {c.mobile}</li>
+
+                <li>
+                  <b>Completed Date:</b>{" "}
+                  {c.completedAt
+                    ? c.completedAt.toDate().toLocaleDateString()
+                    : "—"}
+                </li>
               </ul>
+
+              <button onClick={() => markInCompleted(c.id)} className="complete-btn">
+                Place Complaint Again
+              </button>
             </div>
           ))}
         </div>

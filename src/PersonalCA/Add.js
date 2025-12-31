@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import "./Add.css";
 
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  onAuthStateChanged 
-} from "firebase/auth";
-
 function AddComplaint() {
-  const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     name: "",
     address: "",
@@ -19,30 +11,6 @@ function AddComplaint() {
     district: "",
     mobile: ""
   });
-
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-
-  // --- AUTH CHECK & AUTO LOGIN ---
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        // Popup login instead of redirect
-        signInWithPopup(auth, provider)
-          .then((result) => {
-            setUser(result.user);
-            console.log("Logged in as:", result.user.email);
-          })
-          .catch((error) => {
-            console.error("Login failed:", error);
-          });
-      } else {
-        setUser(currentUser);
-      }
-    });
-
-    return () => unsub();
-  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,7 +23,6 @@ function AddComplaint() {
       await addDoc(collection(db, "complaints"), {
         ...form,
         createdAt: new Date(),
-        user: user.email
       });
 
       alert("Complaint added successfully");
@@ -65,7 +32,7 @@ function AddComplaint() {
         address: "",
         city: "",
         district: "",
-        mobile: ""
+        mobile: "",
       });
     } catch (error) {
       console.error("Error adding complaint:", error);
@@ -73,7 +40,6 @@ function AddComplaint() {
     }
   };
 
-  if (!user) return <h2>Checking login...</h2>;
 
   return (
     <div className="Container">
